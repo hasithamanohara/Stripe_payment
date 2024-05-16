@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:payment/components/textfeild.dart';
+import 'package:payment/screens/Payment/payment.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,6 +12,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController amountChanged = new TextEditingController();
+  TextEditingController desChanged = new TextEditingController();
   TextEditingController nameChanged = new TextEditingController();
   TextEditingController addresChanged = new TextEditingController();
   TextEditingController cityChanged = new TextEditingController();
@@ -25,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _formKey4 = GlobalKey<FormState>();
   final _formKey5 = GlobalKey<FormState>();
   final _formKey6 = GlobalKey<FormState>();
+  final _formKey7 = GlobalKey<FormState>();
 
   List<String> currencyList = <String>[
     'USD',
@@ -41,6 +44,49 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   String selectedCurrency = 'USD';
+
+  //paymentsheet
+  Future<void> initPaymentSheet() async {
+    try {
+      // 1. create payment intent on the server
+      final data = await createPayment(
+          amount: amountChanged.text,
+          currency: selectedCurrency,
+          description: desChanged.text);
+
+      // 2. initialize the payment sheet
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          // Set to true for custom flow
+          customFlow: false,
+          // Main params
+          merchantDisplayName: 'Stripe Test',
+          paymentIntentClientSecret: data['client_secret'],
+          // Customer keys
+          customerEphemeralKeySecret: data['ephemeralKey'],
+          customerId: data['id'],
+          // Extra options
+          // applePay: const PaymentSheetApplePay(
+          //   merchantCountryCode: 'US',
+          // ),
+          // googlePay: const PaymentSheetGooglePay(
+          //   merchantCountryCode: 'US',
+          //   testEnv: true,
+          // ),
+          style: ThemeMode.dark,
+        ),
+      );
+      // setState(() {
+      //   _ready = true;
+      // });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+      print("payment not successfull");
+      rethrow;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Text('Donate'),
+            const Text('Donate to the project'),
             const SizedBox(
               height: 20,
             ),
@@ -109,18 +155,29 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            //name
+            //desc
             Container(
               margin: const EdgeInsets.all(10),
               child: CustomReusbleTextFeild(
-                formKey: _formKey1,
-                title: "name",
-                hintText: "Hasitha",
-                controller: nameChanged,
+                formKey: _formKey7,
+                title: "Description",
+                hintText: "This is a test description",
+                controller: desChanged,
                 isNumber: false,
               ),
             ),
 
+            //description
+            Container(
+              margin: const EdgeInsets.all(10),
+              child: CustomReusbleTextFeild(
+                formKey: _formKey1,
+                title: "Address",
+                hintText: "Thanamalwila",
+                controller: addresChanged,
+                isNumber: false,
+              ),
+            ),
             //Address line 1
             Container(
               margin: const EdgeInsets.all(10),
@@ -174,7 +231,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   controller: pinChanged),
             ),
 
-            ElevatedButton(onPressed: () {}, child: Text("Continue to pay"))
+            ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate() &&
+                      _formKey7.currentState!.validate()) {
+                    await initPaymentSheet();
+                  }
+                },
+                child: Text("Continue to pay"))
           ],
         ),
       )),

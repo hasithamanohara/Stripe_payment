@@ -20,8 +20,9 @@ class CustomReusbleTextFeild extends StatefulWidget {
 class _CustomReusbleTextFeildState extends State<CustomReusbleTextFeild> {
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-        key: widget.formKey,
+    return Form(
+      key: widget.formKey,
+      child: TextFormField(
         controller: widget.controller,
         keyboardType:
             widget.isNumber == true ? TextInputType.number : TextInputType.text,
@@ -31,6 +32,9 @@ class _CustomReusbleTextFeildState extends State<CustomReusbleTextFeild> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-        ));
+        ),
+        validator: (value) => value!.isEmpty ? 'Please enter a value' : null,
+      ),
+    );
   }
 }
