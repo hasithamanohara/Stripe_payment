@@ -55,12 +55,15 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: Center(
+          child: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Donate'),
-            SizedBox(
+            const Text('Donate'),
+            const SizedBox(
               height: 20,
             ),
+            //amount
             Container(
               margin: const EdgeInsets.all(10),
               child: Row(
@@ -104,10 +107,77 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 ],
               ),
-            )
+            ),
+
+            //name
+            Container(
+              margin: const EdgeInsets.all(10),
+              child: CustomReusbleTextFeild(
+                formKey: _formKey1,
+                title: "name",
+                hintText: "Hasitha",
+                controller: nameChanged,
+                isNumber: false,
+              ),
+            ),
+
+            //Address line 1
+            Container(
+              margin: const EdgeInsets.all(10),
+              child: CustomReusbleTextFeild(
+                formKey: _formKey2,
+                title: "Address",
+                hintText: "Thanamalwila",
+                controller: addresChanged,
+                isNumber: false,
+              ),
+            ),
+
+            //city
+            Container(
+              margin: const EdgeInsets.all(10),
+              child: CustomReusbleTextFeild(
+                formKey: _formKey3,
+                title: "City",
+                hintText: "Thanamalwila",
+                controller: cityChanged,
+              ),
+            ),
+
+            //state
+            Container(
+              margin: const EdgeInsets.all(10),
+              child: CustomReusbleTextFeild(
+                  formKey: _formKey4,
+                  title: "State",
+                  hintText: "Southern",
+                  controller: stateChanged),
+            ),
+
+            //Country
+            Container(
+              margin: const EdgeInsets.all(10),
+              child: CustomReusbleTextFeild(
+                  formKey: _formKey5,
+                  title: "Country",
+                  hintText: "Sri lanka",
+                  controller: countryChanged),
+            ),
+
+            //pin
+            Container(
+              margin: const EdgeInsets.all(10),
+              child: CustomReusbleTextFeild(
+                  formKey: _formKey6,
+                  title: "Pin Code",
+                  hintText: "0100",
+                  controller: pinChanged),
+            ),
+
+            ElevatedButton(onPressed: () {}, child: Text("Continue to pay"))
           ],
         ),
-      ),
+      )),
     );
   }
 }
