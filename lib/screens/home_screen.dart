@@ -11,14 +11,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TextEditingController amountChanged = new TextEditingController();
-  TextEditingController desChanged = new TextEditingController();
-  TextEditingController nameChanged = new TextEditingController();
-  TextEditingController addresChanged = new TextEditingController();
-  TextEditingController cityChanged = new TextEditingController();
-  TextEditingController stateChanged = new TextEditingController();
-  TextEditingController countryChanged = new TextEditingController();
-  TextEditingController pinChanged = new TextEditingController();
+  TextEditingController amountChanged = TextEditingController();
+  TextEditingController desChanged = TextEditingController();
+  TextEditingController nameChanged = TextEditingController();
+  TextEditingController addresChanged = TextEditingController();
+  TextEditingController cityChanged = TextEditingController();
+  TextEditingController stateChanged = TextEditingController();
+  TextEditingController countryChanged = TextEditingController();
+  TextEditingController pinChanged = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
   final _formKey1 = GlobalKey<FormState>();
@@ -65,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // Customer keys
           customerEphemeralKeySecret: data['ephemeralKey'],
           customerId: data['id'],
+
           // Extra options
           // applePay: const PaymentSheetApplePay(
           //   merchantCountryCode: 'US',
@@ -79,6 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
       // setState(() {
       //   _ready = true;
       // });
+      print("222222222222222222222");
+      print(data.toString());
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
@@ -236,6 +239,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (_formKey.currentState!.validate() &&
                       _formKey7.currentState!.validate()) {
                     await initPaymentSheet();
+                    try {
+                      await Stripe.instance.presentPaymentSheet();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Payment successful')),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(
+                          'Error: $e',
+                        )),
+                      );
+                      print("payment not successfull");
+                      rethrow;
+                    }
                   }
                 },
                 child: Text("Continue to pay"))

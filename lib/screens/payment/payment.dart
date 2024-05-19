@@ -1,11 +1,9 @@
-//payment functions
-
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-Dio dio = new Dio();
+Dio dio = Dio();
 
 Future createPayment(
     {required String amount,
@@ -17,20 +15,26 @@ Future createPayment(
     final body = {
       'amount': amount,
       'currency': currency.toLowerCase(),
-      'description': " this test description",
+      'description': description,
     };
 
     final Response response = await dio.post(
-      url.toString(),
+      'https://api.stripe.com/v1/payment_intents',
       options: Options(headers: {
         'Authorization': 'Bearer $securityKey',
         'Content-Type': 'application/x-www-form-urlencoded'
       }),
-      data: body,
+      data: {
+        'amount': '100',
+        'currency': 'usd',
+        'description': 'test description',
+      },
     );
 
+    print(response.statusCode);
+
     if (response.statusCode == 200) {
-      final ResponseJson = jsonDecode(response.data);
+      final ResponseJson = (response.data);
       print(ResponseJson);
       return ResponseJson;
     } else {
